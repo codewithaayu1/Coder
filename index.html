@@ -1,833 +1,665 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mr. Mandoriya | Cinematic Wedding Videographer</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --cyan: #00f5ff;
-    --magenta: #ff00aa;
-    --gold: #ffd700;
-    --dark: #050510;
-    --darker: #020208;
-    --glass: rgba(0, 245, 255, 0.05);
-    --glass-border: rgba(0, 245, 255, 0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Rajdhani', sans-serif;
-    background: var(--dark);
-    color: #e0e0ff;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Custom Cursor */
-  .cursor {
-    width: 20px; height: 20px;
-    border: 2px solid var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99999;
-    transition: transform 0.1s, border-color 0.3s;
-    mix-blend-mode: difference;
-  }
-  .cursor-dot {
-    width: 4px; height: 4px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 99999;
-  }
-
-  /* Scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,245,255,0.015) 2px,
-      rgba(0,245,255,0.015) 4px
-    );
-    pointer-events: none;
-    z-index: 9998;
-  }
-
-  /* Grid background */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; width: 100%;
-    padding: 20px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
-    background: linear-gradient(180deg, rgba(2,2,8,0.95) 0%, transparent 100%);
-    border-bottom: 1px solid rgba(0,245,255,0.1);
-    backdrop-filter: blur(10px);
-  }
-
-  .nav-logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--cyan);
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,245,255,0.3);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 40px;
-    list-style: none;
-  }
-
-  .nav-links a {
-    color: #a0c0ff;
-    text-decoration: none;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    transition: color 0.3s, text-shadow 0.3s;
-    position: relative;
-  }
-
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0; height: 1px;
-    background: var(--cyan);
-    transition: width 0.3s;
-    box-shadow: 0 0 8px var(--cyan);
-  }
-
-  .nav-links a:hover {
-    color: var(--cyan);
-    text-shadow: 0 0 15px var(--cyan);
-  }
-  .nav-links a:hover::after { width: 100%; }
-
-  /* HERO */
-  #hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,245,255,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(255,0,170,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(0,100,255,0.06) 0%, transparent 60%),
-      var(--darker);
-  }
-
-  /* Floating orbs */
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    animation: orbFloat 8s ease-in-out infinite;
-  }
-  .orb1 { width: 400px; height: 400px; background: rgba(0,245,255,0.08); top: 10%; left: -10%; animation-delay: 0s; }
-  .orb2 { width: 300px; height: 300px; background: rgba(255,0,170,0.06); bottom: 10%; right: -5%; animation-delay: 3s; }
-  .orb3 { width: 200px; height: 200px; background: rgba(255,215,0,0.05); top: 60%; left: 30%; animation-delay: 5s; }
-
-  @keyframes orbFloat {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-30px) scale(1.05); }
-  }
-
-  .hero-content {
-    text-align: center;
-    z-index: 2;
-    position: relative;
-    padding: 0 20px;
-  }
-
-  .hero-eyebrow {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 8px;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 0.3s;
-  }
-
-  .hero-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 12vw, 10rem);
-    line-height: 0.9;
-    letter-spacing: 4px;
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 0.6s;
-  }
-
-  .hero-name span.glitch {
-    display: block;
-    color: transparent;
-    -webkit-text-stroke: 2px var(--cyan);
-    text-shadow:
-      3px 0 var(--magenta),
-      -3px 0 var(--cyan);
-    animation: glitch 3s infinite;
-  }
-
-  .hero-name span.solid {
-    display: block;
-    color: #fff;
-    text-shadow: 0 0 40px rgba(255,255,255,0.3);
-  }
-
-  @keyframes glitch {
-    0%, 90%, 100% { text-shadow: 3px 0 var(--magenta), -3px 0 var(--cyan); clip-path: none; }
-    92% { text-shadow: -3px 0 var(--magenta), 3px 0 var(--cyan); transform: translate(2px, 0); }
-    94% { text-shadow: 3px 0 var(--magenta), -3px 0 var(--cyan); transform: translate(-2px, 0); }
-    96% { clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); transform: translate(4px, 0); }
-    98% { clip-path: none; transform: translate(0); }
-  }
-
-  .hero-tagline {
-    font-size: 1.4rem;
-    font-weight: 300;
-    color: rgba(200,220,255,0.8);
-    letter-spacing: 4px;
-    margin-bottom: 50px;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 0.9s;
-  }
-
-  .hero-tagline em {
-    color: var(--gold);
-    font-style: normal;
-    font-weight: 600;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 1s ease forwards 1.2s;
-  }
-
-  .btn-primary {
-    padding: 16px 40px;
-    background: transparent;
-    border: 2px solid var(--cyan);
-    color: var(--cyan);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: none;
-    position: relative;
-    overflow: hidden;
-    transition: color 0.3s;
-    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-  }
-
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--cyan);
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-    z-index: -1;
-  }
-
-  .btn-primary:hover { color: var(--dark); }
-  .btn-primary:hover::before { transform: translateX(0); }
-
-  .btn-secondary {
-    padding: 16px 40px;
-    background: transparent;
-    border: 2px solid var(--magenta);
-    color: var(--magenta);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: none;
-    position: relative;
-    overflow: hidden;
-    transition: color 0.3s;
-    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-  }
-
-  .btn-secondary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--magenta);
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-    z-index: -1;
-  }
-
-  .btn-secondary:hover { color: #fff; }
-  .btn-secondary:hover::before { transform: translateX(0); }
-
-  .scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: rgba(0,245,255,0.5);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 3px;
-    animation: bounce 2s infinite;
-  }
-
-  .scroll-line {
-    width: 1px;
-    height: 50px;
-    background: linear-gradient(180deg, var(--cyan), transparent);
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(8px); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* SECTIONS COMMON */
-  section {
-    position: relative;
-    z-index: 1;
-    padding: 120px 60px;
-  }
-
-  .section-label {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 8px;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .section-label::before {
-    content: '';
-    width: 40px;
-    height: 1px;
-    background: var(--cyan);
-    box-shadow: 0 0 8px var(--cyan);
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    letter-spacing: 3px;
-    line-height: 1;
-    margin-bottom: 60px;
-  }
-
-  /* ABOUT */
-  #about {
-    background: linear-gradient(135deg, rgba(0,245,255,0.03) 0%, transparent 50%, rgba(255,0,170,0.02) 100%);
-    border-top: 1px solid rgba(0,245,255,0.1);
-    border-bottom: 1px solid rgba(0,245,255,0.1);
-  }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .about-visual {
-    position: relative;
-  }
-
-  .about-frame {
-    width: 100%;
-    aspect-ratio: 3/4;
-    background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(255,0,170,0.05));
-    border: 1px solid rgba(0,245,255,0.2);
-    position: relative;
-    overflow: hidden;
-    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .about-frame-inner {
-    text-align: center;
-    padding: 40px;
-  }
-
-  .camera-icon {
-    font-size: 6rem;
-    display: block;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 20px var(--cyan));
-    animation: pulse 3s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 20px var(--cyan)); }
-    50% { filter: drop-shadow(0 0 40px var(--cyan)) drop-shadow(0 0 60px rgba(0,245,255,0.3)); }
-  }
-
-  .about-frame::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(0,245,255,0.05) 50%, transparent 70%);
-    animation: shimmer 4s infinite;
-  }
-
-  @keyframes shimmer {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-
-  .about-corner {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border-color: var(--cyan);
-    border-style: solid;
-  }
-  .about-corner.tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; box-shadow: -4px -4px 10px rgba(0,245,255,0.3); }
-  .about-corner.tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; box-shadow: 4px -4px 10px rgba(0,245,255,0.3); }
-  .about-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; box-shadow: -4px 4px 10px rgba(0,245,255,0.3); }
-  .about-corner.br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; box-shadow: 4px 4px 10px rgba(0,245,255,0.3); }
-
-  .about-text p {
-    font-size: 1.15rem;
-    line-height: 1.9;
-    color: rgba(200,220,255,0.8);
-    margin-bottom: 24px;
-    font-weight: 300;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 40px;
-  }
-
-  .stat-box {
-    padding: 20px;
-    border: 1px solid rgba(0,245,255,0.15);
-    background: rgba(0,245,255,0.03);
-    text-align: center;
-    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
-    transition: border-color 0.3s, background 0.3s;
-  }
-
-  .stat-box:hover {
-    border-color: var(--cyan);
-    background: rgba(0,245,255,0.08);
-  }
-
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    color: var(--cyan);
-    text-shadow: 0 0 20px var(--cyan);
-    display: block;
-  }
-
-  .stat-label {
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    color: rgba(180,200,255,0.6);
-    text-transform: uppercase;
-  }
-
-  /* PORTFOLIO */
-  #portfolio {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 120px 60px;
-  }
-
-  .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .portfolio-item {
-    position: relative;
-    aspect-ratio: 16/9;
-    background: linear-gradient(135deg, rgba(0,30,50,0.8), rgba(20,0,40,0.8));
-    border: 1px solid rgba(0,245,255,0.1);
-    overflow: hidden;
-    cursor: none;
-    transition: border-color 0.3s, transform 0.3s;
-    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-  }
-
-  .portfolio-item:hover {
-    border-color: var(--cyan);
-    transform: scale(1.02);
-  }
-
-  .portfolio-item.featured {
-    grid-column: span 2;
-    grid-row: span 1;
-    aspect-ratio: 16/7;
-  }
-
-  .portfolio-bg {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-    transition: transform 0.5s;
-  }
-
-  .portfolio-item:hover .portfolio-bg { transform: scale(1.1); }
-
-  .portfolio-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(0deg, rgba(2,2,8,0.9) 0%, transparent 60%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 24px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
-
-  .portfolio-tag {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 3px;
-    color: var(--cyan);
-    margin-bottom: 6px;
-  }
-
-  .portfolio-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    color: #fff;
-  }
-
-  .play-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    width: 60px;
-    height: 60px;
-    border: 2px solid rgba(255,255,255,0.5);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: rgba(255,255,255,0.7);
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s, border-color 0.3s;
-    backdrop-filter: blur(10px);
-  }
-
-  .portfolio-item:hover .play-btn {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    border-color: var(--cyan);
-    color: var(--cyan);
-    box-shadow: 0 0 20px rgba(0,245,255,0.3);
-  }
-
-  /* VIDEO EXAMPLES */
-  #videos {
-    background: linear-gradient(180deg, rgba(0,245,255,0.02) 0%, transparent 100%);
-    border-top: 1px solid rgba(0,245,255,0.1);
-    padding: 120px 60px;
-  }
-
-  .video-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-  }
-
-  .video-card {
-    position: relative;
-    background: rgba(0,10,20,0.8);
-    border: 1px solid rgba(0,245,255,0.15);
-    overflow: hidden;
-    clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-    transition: border-color 0.3s;
-  }
-
-  .video-card:hover { border-color: var(--cyan); }
-
-  .video-placeholder {
-    aspect-ratio: 16/9;
-    background: linear-gradient(135deg, rgba(0,30,60,0.9), rgba(30,0,60,0.9));
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .video-placeholder::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 10px,
-        rgba(0,245,255,0.02) 10px,
-        rgba(0,245,255,0.02) 20px
-      );
-  }
-
-  .video-icon { font-size: 3rem; margin-bottom: 12px; filter: drop-shadow(0 0 15px var(--cyan)); }
-  .video-dur {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    color: var(--cyan);
-    padding: 4px 12px;
-    border: 1px solid rgba(0,245,255,0.3);
-  }
-
-  .video-info {
-    padding: 20px 24px;
-  }
-
-  .video-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 2px;
-    color: #fff;
-    margin-bottom: 6px;
-  }
-
-  .video-desc {
-    font-size: 0.85rem;
-    color: rgba(180,200,255,0.6);
-    letter-spacing: 1px;
-  }
-
-  /* SERVICES */
-  #services {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 120px 60px;
-  }
-
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .service-card {
-    padding: 40px 30px;
-    border: 1px solid rgba(0,245,255,0.12);
-    background: rgba(0,245,255,0.02);
-    position: relative;
-    transition: border-color 0.4s, background 0.4s, transform 0.3s;
-    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-    overflow: hidden;
-  }
-
-  .service-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(0,245,255,0.05) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-
-  .service-card:hover {
-    border-color: var(--cyan);
-    background: rgba(0,245,255,0.04);
-    transform: translateY(-4px);
-  }
-
-  .service-card:hover::before { opacity: 1; }
-
-  .service-card.featured {
-    border-color: var(--gold);
-    background: rgba(255,215,0,0.03);
-  }
-
-  .service-card.featured::before {
-    background: linear-gradient(135deg, rgba(255,215,0,0.06) 0%, transparent 60%);
-    opacity: 1;
-  }
-
-  .service-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.55rem;
-    letter-spacing: 2px;
-    color: var(--gold);
-    padding: 4px 10px;
-    border: 1px solid var(--gold);
-    background: rgba(255,215,0,0.1);
-  }
-
-  .service-icon {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    display: block;
-    filter: drop-shadow(0 0 10px var(--cyan));
-  }
-
-  .service-card.featured .service-icon {
-    filter: drop-shadow(0 0 10px var(--gold));
-  }
-
-  .service-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
-    letter-spacing: 2px;
-    color: #fff;
-    margin-bottom: 12px;
-  }
-
-  .service-desc {
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: rgba(180,200,255,0.65);
-    margin-bottom: 24px;
-    font-weight: 300;
-  }
-
-  .service-price {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--cyan);
-    text-shadow: 0 0 15px rgba(0,245,255,0.4);
-  }
-
-  .service-card.featured .service-price {
-    color: var(--gold);
-    text-shadow: 0 0 15px rgba(255,215,0,0.4);
-  }
-
-  .service-features {
-    list-style: none;
-    margin-top: 20px;
-  }
-
-  .service-features li {
-    font-size: 0.85rem;
-    color: rgba(180,200,255,0.7);
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(0,245,255,0.06);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .service-features li::before {
-    content: '▶';
-    font-size: 0.5rem;
-    color: var(--cyan);
-  }
-
-  /* INSTAGRAM */
-  #instagram {
-    background: linear-gradient(180deg, transparent, rgba(255,0,170,0.03), transparent);
-    border-top: 1px solid rgba(255,0,170,0.1);
-    border-bottom: 1px solid rgba(255,0,170,0.1);
-    padding: 120px 60px;
-  }
-
-  .insta-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .insta-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-
-  .insta-item {
-    aspect-ratio: 1;
-    background: linear-gradient(135deg, rgba(255,0,170,0.1), rgba(0,30,60,0.5));
-    border: 1px solid rgba(255,0,170,0.15);
-    display: flex;
-    
+‎<!DOCTYPE html>
+‎<html lang="en">
+‎<head>
+‎<meta charset="UTF-8">
+‎<meta name="viewport" content="width=device-width, initial-scale=1.0">
+‎<title>Mr. Mandoriya | Cinematic Wedding Videographer</title>
+‎<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+‎<style>
+‎  :root {
+‎    --cyan: #00f5ff;
+‎    --magenta: #ff00aa;
+‎    --gold: #ffd700;
+‎    --dark: #050510;
+‎    --darker: #020208;
+‎    --glass: rgba(0, 245, 255, 0.05);
+‎    --glass-border: rgba(0, 245, 255, 0.15);
+‎  }
+‎  * { margin: 0; padding: 0; box-sizing: border-box; }
+‎  html { scroll-behavior: smooth; }
+‎  body {
+‎    font-family: 'Rajdhani', sans-serif;
+‎    background: var(--dark);
+‎    color: #e0e0ff;
+‎    overflow-x: hidden;
+‎    cursor: none;
+‎  }
+‎  .cursor {
+‎    width: 20px; height: 20px;
+‎    border: 2px solid var(--cyan);
+‎    border-radius: 50%;
+‎    position: fixed;
+‎    pointer-events: none;
+‎    z-index: 99999;
+‎    transition: transform 0.1s, border-color 0.3s;
+‎    mix-blend-mode: difference;
+‎  }
+‎  .cursor-dot {
+‎    width: 4px; height: 4px;
+‎    background: var(--cyan);
+‎    border-radius: 50%;
+‎    position: fixed;
+‎    pointer-events: none;
+‎    z-index: 99999;
+‎  }
+‎  body::before {
+‎    content: '';
+‎    position: fixed;
+‎    inset: 0;
+‎    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,245,255,0.015) 2px,rgba(0,245,255,0.015) 4px);
+‎    pointer-events: none;
+‎    z-index: 9998;
+‎  }
+‎  body::after {
+‎    content: '';
+‎    position: fixed;
+‎    inset: 0;
+‎    background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+‎    background-size: 60px 60px;
+‎    pointer-events: none;
+‎    z-index: 0;
+‎  }
+‎  nav {
+‎    position: fixed;
+‎    top: 0; width: 100%;
+‎    padding: 20px 60px;
+‎    display: flex;
+‎    justify-content: space-between;
+‎    align-items: center;
+‎    z-index: 1000;
+‎    background: linear-gradient(180deg, rgba(2,2,8,0.95) 0%, transparent 100%);
+‎    border-bottom: 1px solid rgba(0,245,255,0.1);
+‎    backdrop-filter: blur(10px);
+‎  }
+‎  .nav-logo {
+‎    font-family: 'Orbitron', sans-serif;
+‎    font-size: 1.4rem;
+‎    font-weight: 900;
+‎    color: var(--cyan);
+‎    letter-spacing: 3px;
+‎    text-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,245,255,0.3);
+‎  }
+‎  .nav-links { display: flex; gap: 40px; list-style: none; }
+‎  .nav-links a {
+‎    color: #a0c0ff;
+‎    text-decoration: none;
+‎    font-family: 'Orbitron', sans-serif;
+‎    font-size: 0.7rem;
+‎    letter-spacing: 3px;
+‎    text-transform: uppercase;
+‎    transition: color 0.3s, text-shadow 0.3s;
+‎    position: relative;
+‎  }
+‎  .nav-links a::after {
+‎    content: '';
+‎    position: absolute;
+‎    bottom: -4px; left: 0;
+‎    width: 0; height: 1px;
+‎    background: var(--cyan);
+‎    transition: width 0.3s;
+‎    box-shadow: 0 0 8px var(--cyan);
+‎  }
+‎  .nav-links a:hover { color: var(--cyan); text-shadow: 0 0 15px var(--cyan); }
+‎  .nav-links a:hover::after { width: 100%; }
+‎  #hero {
+‎    min-height: 100vh;
+‎    display: flex;
+‎    align-items: center;
+‎    justify-content: center;
+‎    position: relative;
+‎    overflow: hidden;
+‎    z-index: 1;
+‎  }
+‎  .hero-bg {
+‎    position: absolute;
+‎    inset: 0;
+‎    background:
+‎      radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,245,255,0.07) 0%, transparent 70%),
+‎      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(255,0,170,0.08) 0%, transparent 60%),
+‎      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(0,100,255,0.06) 0%, transparent 60%),
+‎      var(--darker);
+‎  }
+‎  .orb { position: absolute; border-radius: 50%; filter: blur(60px); animation: orbFloat 8s ease-in-out infinite; }
+‎  .orb1 { width: 400px; height: 400px; background: rgba(0,245,255,0.08); top: 10%; left: -10%; animation-delay: 0s; }
+‎  .orb2 { width: 300px; height: 300px; background: rgba(255,0,170,0.06); bottom: 10%; right: -5%; animation-delay: 3s; }
+‎  .orb3 { width: 200px; height: 200px; background: rgba(255,215,0,0.05); top: 60%; left: 30%; animation-delay: 5s; }
+‎  @keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.05); } }
+‎  .hero-content { text-align: center; z-index: 2; position: relative; padding: 0 20px; }
+‎  .hero-eyebrow {
+‎    font-family: 'Orbitron', sans-serif;
+‎    font-size: 0.75rem;
+‎    letter-spacing: 8px;
+‎    color: var(--cyan);
+‎    text-transform: uppercase;
+‎    margin-bottom: 20px;
+‎    opacity: 0;
+‎    animation: fadeUp 1s ease forwards 0.3s;
+‎  }
+‎  .hero-name {
+‎    font-family: 'Bebas Neue', sans-serif;
+‎    font-size: clamp(4rem, 12vw, 10rem);
+‎    line-height: 0.9;
+‎    letter-spacing: 4px;
+‎    margin-bottom: 20px;
+‎    opacity: 0;
+‎    animation: fadeUp 1s ease forwards 0.6s;
+‎  }
+‎  .hero-name span.glitch {
+‎    display: block;
+‎    color: transparent;
+‎    -webkit-text-stroke: 2px var(--cyan);
+‎    text-shadow: 3px 0 var(--magenta), -3px 0 var(--cyan);
+‎    animation: glitch 3s infinite;
+‎  }
+‎  .hero-name span.solid { display: block; color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+‎  @keyframes glitch {
+‎    0%, 90%, 100% { text-shadow: 3px 0 var(--magenta), -3px 0 var(--cyan); clip-path: none; }
+‎    92% { text-shadow: -3px 0 var(--magenta), 3px 0 var(--cyan); transform: translate(2px, 0); }
+‎    94% { text-shadow: 3px 0 var(--magenta), -3px 0 var(--cyan); transform: translate(-2px, 0); }
+‎    96% { clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); transform: translate(4px, 0); }
+‎    98% { clip-path: none; transform: translate(0); }
+‎  }
+‎  .hero-tagline {
+‎    font-size: 1.4rem;
+‎    font-weight: 300;
+‎    color: rgba(200,220,255,0.8);
+‎    letter-spacing: 4px;
+‎    margin-bottom: 50px;
+‎    opacity: 0;
+‎    animation: fadeUp 1s ease forwards 0.9s;
+‎  }
+‎  .hero-tagline em { color: var(--gold); font-style: normal; font-weight: 600; }
+‎  .hero-cta { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 1s ease forwards 1.2s; }
+‎  .btn-primary {
+‎    padding: 16px 40px;
+‎    background: transparent;
+‎    border: 2px solid var(--cyan);
+‎    color: var(--cyan);
+‎    font-family: 'Orbitron', sans-serif;
+‎    font-size: 0.75rem;
+‎    letter-spacing: 4px;
+‎    text-transform: uppercase;
+‎    text-decoration: none;
+‎    cursor: none;
+‎    position: relative;
+‎    overflow: hidden;
+‎    transition: color 0.3s;
+‎    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+‎  }
+‎  .btn-primary::before { content: ''; position: absolute; inset: 0; background: var(--cyan); transform: translateX(-100%); transition: transform 0.3s; z-index: -1; }
+‎  .btn-primary:hover { color: var(--dark); }
+‎  .btn-primary:hover::before { transform: translateX(0); }
+‎  .btn-secondary {
+‎    padding: 16px 40px;
+‎    background: transparent;
+‎    border: 2px solid var(--magenta);
+‎    color: var(--magenta);
+‎    font-family: 'Orbitron', sans-serif;
+‎    font-size: 0.75rem;
+‎    letter-spacing: 4px;
+‎    text-transform: uppercase;
+‎    text-decoration: none;
+‎    cursor: none;
+‎    position: relative;
+‎    overflow: hidden;
+‎    transition: color 0.3s;
+‎    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+‎  }
+‎  .btn-secondary::before { content: ''; position: absolute; inset: 0; background: var(--magenta); transform: translateX(-100%); transition: transform 0.3s; z-index: -1; }
+‎  .btn-secondary:hover { color: #fff; }
+‎  .btn-secondary:hover::before { transform: translateX(0); }
+‎  .scroll-indicator {
+‎    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+‎    display: flex; flex-direction: column; align-items: center; gap: 8px;
+‎    color: rgba(0,245,255,0.5); font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 3px;
+‎    animation: bounce 2s infinite;
+‎  }
+‎  .scroll-line { width: 1px; height: 50px; background: linear-gradient(180deg, var(--cyan), transparent); }
+‎  @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+‎  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+‎  section { position: relative; z-index: 1; padding: 120px 60px; }
+‎  .section-label {
+‎    font-family: 'Orbitron', sans-serif; font-size: 0.65rem; letter-spacing: 8px; color: var(--cyan);
+‎    text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 16px;
+‎  }
+‎  .section-label::before { content: ''; width: 40px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+‎  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: 3px; line-height: 1; margin-bottom: 60px; }
+‎  #about {
+‎    background: linear-gradient(135deg, rgba(0,245,255,0.03) 0%, transparent 50%, rgba(255,0,170,0.02) 100%);
+‎    border-top: 1px solid rgba(0,245,255,0.1);
+‎    border-bottom: 1px solid rgba(0,245,255,0.1);
+‎  }
+‎  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto; }
+‎  .about-frame {
+‎    width: 100%; aspect-ratio: 3/4;
+‎    background: linear-gradient(135deg, rgba(0,245,255,0.1), rgba(255,0,170,0.05));
+‎    border: 1px solid rgba(0,245,255,0.2);
+‎    position: relative; overflow: hidden;
+‎    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+‎    display: flex; align-items: center; justify-content: center;
+‎  }
+‎  .about-frame-inner { text-align: center; padding: 40px; }
+‎  .camera-icon { font-size: 6rem; display: block; margin-bottom: 20px; filter: drop-shadow(0 0 20px var(--cyan)); animation: pulse 3s ease-in-out infinite; }
+‎  @keyframes pulse { 0%, 100% { filter: drop-shadow(0 0 20px var(--cyan)); } 50% { filter: drop-shadow(0 0 40px var(--cyan)) drop-shadow(0 0 60px rgba(0,245,255,0.3)); } }
+‎  .about-frame::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent 30%, rgba(0,245,255,0.05) 50%, transparent 70%); animation: shimmer 4s infinite; }
+‎  @keyframes shimmer { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+‎  .about-corner { position: absolute; width: 30px; height: 30px; border-color: var(--cyan); border-style: solid; }
+‎  .about-corner.tl { top: -2px; left: -2px; border-width: 2px 0 0 2px; box-shadow: -4px -4px 10px rgba(0,245,255,0.3); }
+‎  .about-corner.tr { top: -2px; right: -2px; border-width: 2px 2px 0 0; box-shadow: 4px -4px 10px rgba(0,245,255,0.3); }
+‎  .about-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 2px 2px; box-shadow: -4px 4px 10px rgba(0,245,255,0.3); }
+‎  .about-corner.br { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; box-shadow: 4px 4px 10px rgba(0,245,255,0.3); }
+‎  .about-text p { font-size: 1.15rem; line-height: 1.9; color: rgba(200,220,255,0.8); margin-bottom: 24px; font-weight: 300; }
+‎  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+‎  .stat-box { padding: 20px; border: 1px solid rgba(0,245,255,0.15); background: rgba(0,245,255,0.03); text-align: center; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); transition: border-color 0.3s, background 0.3s; }
+‎  .stat-box:hover { border-color: var(--cyan); background: rgba(0,245,255,0.08); }
+‎  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--cyan); text-shadow: 0 0 20px var(--cyan); display: block; }
+‎  .stat-label { font-size: 0.7rem; letter-spacing: 2px; color: rgba(180,200,255,0.6); text-transform: uppercase; }
+‎  #portfolio { max-width: 1400px; margin: 0 auto; padding: 120px 60px; }
+‎  .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+‎  .portfolio-item {
+‎    position: relative; aspect-ratio: 16/9;
+‎    background: linear-gradient(135deg, rgba(0,30,50,0.8), rgba(20,0,40,0.8));
+‎    border: 1px solid rgba(0,245,255,0.1); overflow: hidden; cursor: none;
+‎    transition: border-color 0.3s, transform 0.3s;
+‎    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+‎  }
+‎  .portfolio-item:hover { border-color: var(--cyan); transform: scale(1.02); }
+‎  .portfolio-item.featured { grid-column: span 2; aspect-ratio: 16/7; }
+‎  .portfolio-bg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem; transition: transform 0.5s; }
+‎  .portfolio-item:hover .portfolio-bg { transform: scale(1.1); }
+‎  .portfolio-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(2,2,8,0.9) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; opacity: 0; transition: opacity 0.3s; }
+‎  .portfolio-item:hover .portfolio-overlay { opacity: 1; }
+‎  .portfolio-tag { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 3px; color: var(--cyan); margin-bottom: 6px; }
+‎  .portfolio-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; color: #fff; }
+‎  .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8); width: 60px; height: 60px; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: rgba(255,255,255,0.7); opacity: 0; transition: opacity 0.3s, transform 0.3s, border-color 0.3s; backdrop-filter: blur(10px); }
+‎  .portfolio-item:hover .play-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+‎  #videos { background: linear-gradient(180deg, rgba(0,245,255,0.02) 0%, transparent 100%); border-top: 1px solid rgba(0,245,255,0.1); padding: 120px 60px; }
+‎  .video-container { max-width: 1200px; margin: 0 auto; }
+‎  .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+‎  .video-card { position: relative; background: rgba(0,10,20,0.8); border: 1px solid rgba(0,245,255,0.15); overflow: hidden; clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); transition: border-color 0.3s; }
+‎  .video-card:hover { border-color: var(--cyan); }
+‎  .video-placeholder { aspect-ratio: 16/9; background: linear-gradient(135deg, rgba(0,30,60,0.9), rgba(30,0,60,0.9)); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+‎  .video-placeholder::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0,245,255,0.02) 10px, rgba(0,245,255,0.02) 20px); }
+‎  .video-icon { font-size: 3rem; margin-bottom: 12px; filter: drop-shadow(0 0 15px var(--cyan)); }
+‎  .video-dur { font-family: 'Orbitron', sans-serif; font-size: 0.65rem; letter-spacing: 3px; color: var(--cyan); padding: 4px 12px; border: 1px solid rgba(0,245,255,0.3); }
+‎  .video-info { padding: 20px 24px; }
+‎  .video-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: #fff; margin-bottom: 6px; }
+‎  .video-desc { font-size: 0.85rem; color: rgba(180,200,255,0.6); letter-spacing: 1px; }
+‎  #services { max-width: 1200px; margin: 0 auto; padding: 120px 60px; }
+‎  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+‎  .service-card { padding: 40px 30px; border: 1px solid rgba(0,245,255,0.12); background: rgba(0,245,255,0.02); position: relative; transition: border-color 0.4s, background 0.4s, transform 0.3s; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); overflow: hidden; }
+‎  .service-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,245,255,0.05) 0%, transparent 60%); opacity: 0; transition: opacity 0.4s; }
+‎  .service-card:hover { border-color: var(--cyan); background: rgba(0,245,255,0.04); transform: translateY(-4px); }
+‎  .service-card:hover::before { opacity: 1; }
+‎  .service-card.featured { border-color: var(--gold); background: rgba(255,215,0,0.03); }
+‎  .service-card.featured::before { background: linear-gradient(135deg, rgba(255,215,0,0.06) 0%, transparent 60%); opacity: 1; }
+‎  .service-badge { position: absolute; top: 16px; right: 16px; font-family: 'Orbitron', sans-serif; font-size: 0.55rem; letter-spacing: 2px; color: var(--gold); padding: 4px 10px; border: 1px solid var(--gold); background: rgba(255,215,0,0.1); }
+‎  .service-icon { font-size: 2.5rem; margin-bottom: 20px; display: block; filter: drop-shadow(0 0 10px var(--cyan)); }
+‎  .service-card.featured .service-icon { filter: drop-shadow(0 0 10px var(--gold)); }
+‎  .service-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 2px; color: #fff; margin-bottom: 12px; }
+‎  .service-desc { font-size: 0.9rem; line-height: 1.7; color: rgba(180,200,255,0.65); margin-bottom: 24px; font-weight: 300; }
+‎  .service-price { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 15px rgba(0,245,255,0.4); }
+‎  .service-card.featured .service-price { color: var(--gold); text-shadow: 0 0 15px rgba(255,215,0,0.4); }
+‎  .service-features { list-style: none; margin-top: 20px; }
+‎  .service-features li { font-size: 0.85rem; color: rgba(180,200,255,0.7); padding: 6px 0; border-bottom: 1px solid rgba(0,245,255,0.06); display: flex; align-items: center; gap: 10px; }
+‎  .service-features li::before { content: '▶'; font-size: 0.5rem; color: var(--cyan); }
+‎  #instagram { background: linear-gradient(180deg, transparent, rgba(255,0,170,0.03), transparent); border-top: 1px solid rgba(255,0,170,0.1); border-bottom: 1px solid rgba(255,0,170,0.1); padding: 120px 60px; }
+‎  .insta-container { max-width: 1200px; margin: 0 auto; }
+‎  .insta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+‎  .insta-item { aspect-ratio: 1; background: linear-gradient(135deg, rgba(255,0,170,0.1), rgba(0,30,60,0.5)); border: 1px solid rgba(255,0,170,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 2rem; cursor: none; transition: border-color 0.3s, transform 0.3s, background 0.3s; position: relative; overflow: hidden; }
+‎  .insta-item::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,0,170,0.15), rgba(0,245,255,0.05)); opacity: 0; transition: opacity 0.3s; }
+‎  .insta-item:hover { border-color: var(--magenta); transform: scale(1.03); }
+‎  .insta-item:hover::before { opacity: 1; }
+‎  .insta-label { font-family: 'Orbitron', sans-serif; font-size: 0.55rem; letter-spacing: 2px; color: rgba(255,0,170,0.7); margin-top: 8px; position: relative; z-index: 1; }
+‎  #contact { max-width: 900px; margin: 0 auto; padding: 120px 60px; text-align: center; }
+‎  .contact-box { padding: 60px; border: 1px solid rgba(0,245,255,0.15); background: rgba(0,245,255,0.02); position: relative; margin-top: 60px; clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px); }
+‎  .contact-box::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,245,255,0.05) 0%, transparent 50%, rgba(255,0,170,0.03) 100%); pointer-events: none; }
+‎  .contact-info { display: flex; justify-content: center; gap: 60px; margin-bottom: 50px; flex-wrap: wrap; }
+‎  .contact-item { text-align: center; }
+‎  .contact-icon { font-size: 2rem; display: block; margin-bottom: 10px; }
+‎  .contact-label { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 3px; color: rgba(0,245,255,0.6); margin-bottom: 8px; display: block; }
+‎  .contact-value { font-size: 1.1rem; color: #fff; font-weight: 600; letter-spacing: 1px; }
+‎  .contact-value a { color: var(--cyan); text-decoration: none; transition: text-shadow 0.3s; }
+‎  .contact-value a:hover { text-shadow: 0 0 15px var(--cyan); }
+‎  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; margin-bottom: 20px; }
+‎  .form-field { display: flex; flex-direction: column; gap: 8px; }
+‎  .form-field.full { grid-column: span 2; }
+‎  .form-field label { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 3px; color: rgba(0,245,255,0.7); text-transform: uppercase; }
+‎  .form-field input, .form-field textarea, .form-field select { background: rgba(0,245,255,0.04); border: 1px solid rgba(0,245,255,0.15); color: #e0e0ff; padding: 14px 18px; font-family: 'Rajdhani', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s, background 0.3s; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+‎  .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--cyan); background: rgba(0,245,255,0.07); box-shadow: 0 0 20px rgba(0,245,255,0.1); }
+‎  .form-field select option { background: #050510; }
+‎  .form-field textarea { height: 120px; resize: vertical; }
+‎  .form-submit { width: 100%; padding: 18px; background: transparent; border: 2px solid var(--cyan); color: var(--cyan); font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 6px; text-transform: uppercase; cursor: none; position: relative; overflow: hidden; transition: color 0.3s; clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%); margin-top: 20px; }
+‎  .form-submit::before { content: ''; position: absolute; inset: 0; background: var(--cyan); transform: translateX(-100%); transition: transform 0.4s; z-index: -1; }
+‎  .form-submit:hover { color: var(--dark); }
+‎  .form-submit:hover::before { transform: translateX(0); }
+‎  footer { position: relative; z-index: 1; padding: 40px 60px; border-top: 1px solid rgba(0,245,255,0.1); display: flex; justify-content: space-between; align-items: center; background: rgba(2,2,8,0.8); backdrop-filter: blur(10px); }
+‎  .footer-logo { font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: 900; color: var(--cyan); letter-spacing: 3px; text-shadow: 0 0 15px var(--cyan); }
+‎  .footer-copy { font-size: 0.8rem; color: rgba(180,200,255,0.4); letter-spacing: 1px; }
+‎  .footer-location { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; letter-spacing: 3px; color: rgba(0,245,255,0.5); display: flex; align-items: center; gap: 8px; }
+‎  .neon-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), var(--magenta), transparent); box-shadow: 0 0 10px rgba(0,245,255,0.3); }
+‎  .typing-text { display: inline-block; border-right: 2px solid var(--cyan); padding-right: 4px; animation: blink 1s step-end infinite; }
+‎  @keyframes blink { 0%, 100% { border-color: var(--cyan); } 50% { border-color: transparent; } }
+‎  @media (max-width: 768px) {
+‎    nav { padding: 16px 24px; }
+‎    .nav-links { display: none; }
+‎    section { padding: 80px 24px; }
+‎    #portfolio, #services, #contact { padding: 80px 24px; }
+‎    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+‎    .portfolio-grid { grid-template-columns: 1fr; }
+‎    .portfolio-item.featured { grid-column: auto; }
+‎    .services-grid { grid-template-columns: 1fr; }
+‎    .insta-grid { grid-template-columns: repeat(2, 1fr); }
+‎    .form-grid { grid-template-columns: 1fr; }
+‎    .form-field.full { grid-column: auto; }
+‎    .contact-box { padding: 30px 20px; }
+‎    footer { flex-direction: column; gap: 16px; text-align: center; }
+‎    .hero-name { font-size: clamp(3rem, 16vw, 6rem); }
+‎    .stats-grid { grid-template-columns: 1fr 1fr; }
+‎    .video-grid { grid-template-columns: 1fr; }
+‎    .contact-info { gap: 30px; }
+‎  }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<nav>
+  <div class="nav-logo">M.</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#videos">Reels</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#instagram">Instagram</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Cinematic Wedding Videographer · Bihar, India</div>
+    <h1 class="hero-name">
+      <span class="glitch">MANDORIYA</span>
+      <span class="solid">MR.</span>
+    </h1>
+    <p class="hero-tagline">Turning <em>Moments</em> Into <em>Cinema</em></p>
+    <div class="hero-cta">
+      <a href="#portfolio" class="btn-primary">View Portfolio</a>
+      <a href="#contact" class="btn-secondary">Book Now</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>SCROLL</span>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="about">
+  <div class="about-grid">
+    <div class="about-visual">
+      <div class="about-frame">
+        <div class="about-corner tl"></div>
+        <div class="about-corner tr"></div>
+        <div class="about-corner bl"></div>
+        <div class="about-corner br"></div>
+        <div class="about-frame-inner">
+          <span class="camera-icon">🎬</span>
+          <div style="font-family:'Orbitron',sans-serif;font-size:0.6rem;letter-spacing:3px;color:var(--cyan);">CAPTURING ETERNITY</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-text">
+      <div class="section-label">Who I Am</div>
+      <h2 class="section-title">The Story <br>Behind the Lens</h2>
+      <p>I am <strong style="color:var(--cyan)">Mr. Mandoriya</strong>, a passionate cinematic wedding videographer based in Bihar. I don't just record weddings — I craft timeless visual narratives that capture every emotion, every glance, every promise.</p>
+      <p>With an eye for dramatic light and a deep understanding of storytelling, each video I create is a masterpiece — a cinematic experience that transports you back to the most beautiful day of your life, forever.</p>
+      <div class="stats-grid">
+        <div class="stat-box"><span class="stat-num">200+</span><span class="stat-label">Weddings</span></div>
+        <div class="stat-box"><span class="stat-num">5+</span><span class="stat-label">Years Exp.</span></div>
+        <div class="stat-box"><span class="stat-num">100%</span><span class="stat-label">Happy Clients</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="portfolio" style="max-width:1400px;margin:0 auto;">
+  <div class="section-label">My Work</div>
+  <h2 class="section-title">Portfolio</h2>
+  <div class="portfolio-grid">
+    <div class="portfolio-item featured">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#050a20,#0d0520);font-size:6rem;">💍</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">CINEMATIC WEDDING</div>
+        <div class="portfolio-name">Royal Rajput Wedding Film</div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#0a0520,#200510);">🕯️</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">PRE-WEDDING</div>
+        <div class="portfolio-name">Golden Hour Love Story</div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#001020,#002010);">🎊</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">HIGHLIGHT REEL</div>
+        <div class="portfolio-name">Summer Celebration</div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#100020,#200010);">🌸</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">ENGAGEMENT</div>
+        <div class="portfolio-name">Floral Dream Ceremony</div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#050020,#001520);">✨</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">SANGEET NIGHT</div>
+        <div class="portfolio-name">Lights & Music Reel</div>
+      </div>
+    </div>
+    <div class="portfolio-item">
+      <div class="portfolio-bg" style="background:linear-gradient(135deg,#150010,#000a20);">🌅</div>
+      <div class="play-btn">▶</div>
+      <div class="portfolio-overlay">
+        <div class="portfolio-tag">DESTINATION</div>
+        <div class="portfolio-name">Sunset Wedding Vows</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="videos">
+  <div class="video-container">
+    <div class="section-label">Showreel</div>
+    <h2 class="section-title">Video Examples</h2>
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="video-placeholder"><div class="video-icon">🎥</div><div class="video-dur">3:24 MIN</div></div>
+        <div class="video-info"><div class="video-title">Cinematic Wedding Teaser</div><div class="video-desc">A 3-minute emotional highlight film with dramatic color grading and cinematic cuts</div></div>
+      </div>
+      <div class="video-card">
+        <div class="video-placeholder"><div class="video-icon">💑</div><div class="video-dur">2:10 MIN</div></div>
+        <div class="video-info"><div class="video-title">Pre-Wedding Film</div><div class="video-desc">Romantic pre-wedding story shot at iconic locations with golden hour lighting</div></div>
+      </div>
+      <div class="video-card">
+        <div class="video-placeholder"><div class="video-icon">🎶</div><div class="video-dur">1:45 MIN</div></div>
+        <div class="video-info"><div class="video-title">Sangeet Night Highlights</div><div class="video-desc">High-energy music and dance moments captured with dynamic editing</div></div>
+      </div>
+      <div class="video-card">
+        <div class="video-placeholder"><div class="video-icon">🌟</div><div class="video-dur">5:00 MIN</div></div>
+        <div class="video-info"><div class="video-title">Full Wedding Documentary</div><div class="video-desc">Complete wedding day coverage from morning rituals to grand reception</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="services">
+  <div class="section-label">What I Offer</div>
+  <h2 class="section-title">Services & Pricing</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-icon">🎬</span>
+      <div class="service-name">Basic Package</div>
+      <p class="service-desc">Perfect for intimate ceremonies. Single-day coverage with highlight reel delivery.</p>
+      <div class="service-price">₹15,000</div>
+      <ul class="service-features">
+        <li>1 Day Coverage</li><li>3-5 Min Highlight Film</li><li>HD Quality Video</li><li>Online Delivery</li><li>1 Videographer</li>
+      </ul>
+    </div>
+    <div class="service-card featured">
+      <div class="service-badge">★ MOST POPULAR</div>
+      <span class="service-icon">💍</span>
+      <div class="service-name">Cinematic Package</div>
+      <p class="service-desc">Our signature offering — a full cinematic experience with drone footage and multi-camera setup.</p>
+      <div class="service-price">₹35,000</div>
+      <ul class="service-features">
+        <li>2 Days Full Coverage</li><li>Cinematic Highlight Film</li><li>4K Ultra HD Quality</li><li>Drone Aerial Shots</li><li>2 Videographers</li><li>Pre-Wedding Session</li>
+      </ul>
+      </div>
+    <div class="service-card">
+      <span class="service-icon">👑</span>
+      <div class="service-name">Royal Package</div>
+      <p class="service-desc">All-inclusive premium coverage for grand weddings that demand nothing but perfection.</p>
+      <div class="service-price">₹65,000</div>
+      <ul class="service-features">
+        <li>Full Event Coverage</li><li>Feature-Length Film</li><li>4K + Slow Motion</li><li>Drone + Gimbal</li><li>3 Videographers</li><li>Same Day Edit</li><li>USB + Online Delivery</li>
+      </ul>
+    </div>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="instagram">
+  <div class="insta-container">
+    <div class="section-label">Social Feed</div>
+    <h2 class="section-title">Instagram</h2>
+    <div class="insta-grid">
+      <div class="insta-item">💒<span class="insta-label">WEDDING</span></div>
+      <div class="insta-item">🌅<span class="insta-label">SUNSET</span></div>
+      <div class="insta-item">💃<span class="insta-label">SANGEET</span></div>
+      <div class="insta-item">📸<span class="insta-label">BTS</span></div>
+      <div class="insta-item">🎊<span class="insta-label">RECEPTION</span></div>
+      <div class="insta-item">👰<span class="insta-label">BRIDAL</span></div>
+      <div class="insta-item">🕌<span class="insta-label">CEREMONY</span></div>
+      <div class="insta-item">✨<span class="insta-label">MOMENTS</span></div>
+    </div>
+    <div style="margin-top:40px;text-align:center;">
+      <a href="#" class="btn-secondary" style="display:inline-block;">Follow on Instagram</a>
+    </div>
+  </div>
+</section>
+<div class="neon-divider"></div>
+<section id="contact">
+  <div class="section-label">Get in Touch</div>
+  <h2 class="section-title">Book Your Date</h2>
+  <div class="contact-box">
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <span class="contact-label">Phone / WhatsApp</span>
+        <div class="contact-value"><a href="tel:+918294713480">+91 82947 13480</a></div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <span class="contact-label">Location</span>
+        <div class="contact-value">Bihar, India</div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">🎥</span>
+        <span class="contact-label">Specialty</span>
+        <div class="contact-value">Wedding Films</div>
+      </div>
+    </div>
+    <form onsubmit="handleSubmit(event)">
+      <div class="form-grid">
+        <div class="form-field"><label>Your Name</label><input type="text" placeholder="Enter your name" required></div>
+        <div class="form-field"><label>Phone Number</label><input type="tel" placeholder="+91 XXXXXXXXXX" required></div>
+        <div class="form-field"><label>Wedding Date</label><input type="date" required></div>
+        <div class="form-field">
+          <label>Package</label>
+          <select>
+            <option>Basic Package — ₹15,000</option>
+            <option>Cinematic Package — ₹35,000</option>
+            <option>Royal Package — ₹65,000</option>
+            <option>Custom — Let's Talk</option>
+          </select>
+        </div>
+        <div class="form-field full"><label>Message / Location</label><textarea placeholder="Tell me about your wedding venue, requirements, or any special requests..."></textarea></div>
+      </div>
+      <button type="submit" class="form-submit">Send Booking Request ▶</button>
+    </form>
+  </div>
+</section>
+<footer>
+  <div class="footer-logo">MR. MANDORIYA</div>
+  <div class="footer-copy">© 2025 Mr. Mandoriya · Cinematic Wedding Videography</div>
+  <div class="footer-location">📍 Bihar, India</div>
+</footer>
+<script>
+  const cursor = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursorDot');
+  document.addEventListener('mousemove', (e) => {
+    cursorDot.style.left = e.clientX - 2 + 'px';
+    cursorDot.style.top = e.clientY - 2 + 'px';
+    cursor.style.left = e.clientX - 10 + 'px';
+    cursor.style.top = e.clientY - 10 + 'px';
+  });
+  document.querySelectorAll('a, button, .portfolio-item, .service-card, .insta-item').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; cursor.style.borderColor = '#ff00aa'; });
+    el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; cursor.style.borderColor = '#00f5ff'; });
+  });
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.style.opacity = '1'; entry.target.style.transform = 'translateY(0)'; }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.service-card, .portfolio-item, .video-card, .stat-box, .insta-item').forEach(el => {
+    el.style.opacity = '0'; el.style.transform = 'translateY(20px)'; el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    btn.textContent = '✓ REQUEST SENT — WE\'LL CONTACT YOU SOON';
+    btn.style.borderColor = '#00ff88'; btn.style.color = '#00ff88';
+    setTimeout(() => { btn.textContent = 'Send Booking Request ▶'; btn.style.borderColor = '#00f5ff'; btn.style.color = '#00f5ff'; }, 4000);
+  }
+  const taglines = ['Turning Moments Into Cinema','Your Story. Our Lens.','Har Lamha. Cinema Hai.','Forever in Every Frame.'];
+  let ti = 0, ci = 0;
+  const taglineEl = document.querySelector('.hero-tagline');
+  if (taglineEl) {
+    function typeText() {
+      const text = taglines[ti];
+      if (ci <= text.length) {
+        const part1 = text.substring(0, text.indexOf(' '));
+        if (ci <= part1.length) { taglineEl.innerHTML = `<em>${text.substring(0, ci)}</em><span class="typing-text"></span>`; }
+        else { taglineEl.innerHTML = `<em>${part1}</em>${text.substring(part1.length, ci)}<span class="typing-text"></span>`; }
+        ci++; setTimeout(typeText, 80);
+      } else {
+        setTimeout(() => { ti = (ti + 1) % taglines.length; ci = 0; taglineEl.innerHTML = ''; typeText(); }, 2500);
+      }
+    }
+    setTimeout(typeText, 1500);
+  }
+</script>
+</body>
+  </html>
